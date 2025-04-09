@@ -17,11 +17,11 @@ public class MafiaGResult extends JFrame {
         this.isWinner = isWinner;
         this.scoreEarned = isWinner ? 5 : -1;
 
-        DatabaseManager.updateUserScore(username, scoreEarned);
+//        DatabaseManager.updateUserScore(username, scoreEarned);
         int updatedScore = DatabaseManager.getUserScore(username);
 
         setTitle("MafiaG");
-        ImageIcon logoIcon = new ImageIcon("src/MafiaG_logo.png");
+        ImageIcon logoIcon = new ImageIcon("src/img/logo.png");
         setIconImage(logoIcon.getImage());
         setSize(1200, 800);
         setLocationRelativeTo(null);
@@ -38,14 +38,14 @@ public class MafiaGResult extends JFrame {
         centerPanel.setOpaque(false); // 배경 투명
 
         // 결과 텍스트
-        JLabel resultLabel = new JLabel(isWinner ? "승리" : "패배", SwingConstants.CENTER);
-        resultLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 50));
+        JLabel resultLabel = new JLabel(isWinner ? "승 리" : "패 배", SwingConstants.CENTER);
+        resultLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 55));
         resultLabel.setForeground(new Color(50, 130, 200));
         resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT); 
         resultLabel.setBorder(BorderFactory.createEmptyBorder(60, 0, 30, 0)); // 여백 조정
 
         // 이미지
-        String imagePath = isWinner ? "src/victory.png" : "src/defeat.png";
+        String imagePath = isWinner ? "src/img/victory.png" : "src/img/defeat.png";
         ImageIcon icon = new ImageIcon(imagePath);
         Image img = icon.getImage().getScaledInstance(640, 384, Image.SCALE_SMOOTH); 
         JLabel imageLabel = new JLabel(new ImageIcon(img));
@@ -63,8 +63,8 @@ public class MafiaGResult extends JFrame {
         JButton againButton = new JButton();
 
         // 아이콘
-        ImageIcon quitIcon = new ImageIcon("src/quit_button.png");
-        ImageIcon playIcon = new ImageIcon("src/playagain_button.png");
+        ImageIcon quitIcon = new ImageIcon("src/img/quit_button.png");
+        ImageIcon playIcon = new ImageIcon("src/img/playagain_button.png");
 
         Image resizedQuit = quitIcon.getImage().getScaledInstance(150, 110, Image.SCALE_SMOOTH);
         Image resizedPlay = playIcon.getImage().getScaledInstance(200, 100, Image.SCALE_SMOOTH);

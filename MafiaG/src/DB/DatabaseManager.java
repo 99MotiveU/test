@@ -157,19 +157,40 @@ public class DatabaseManager {
 		return score;
 	}
 
-	// 유저의 점수 업데이트
-	public static void updateUserScore(String username, int scoreToAdd) {
-		try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-			 PreparedStatement pstmt = conn.prepareStatement(
-					 "UPDATE member SET score = score + ? WHERE member_id = ?")) {
+	// 게임 종료 후 점수 반영 (Gemini 제외, 동점자 모두 승리 처리)
+	public static void updateScoresAfterGame(List<String> winners, List<String> participants) {
+	    try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD)) {
+	        for (String player : participants) {
+	            if (player.equals("Gemini")) continue;
 
-			pstmt.setInt(1, scoreToAdd);
-			pstmt.setString(2, username);
-			pstmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	            int scoreChange = 0;
+
+	            if (winners.contains("Gemini")) {
+	                // Gemini가 포함된 승리자일 경우: 나머지 전부 -1점
+	                scoreChange = -1;
+	            } else {
+	                // 일반 참여자 중 승자: +5점 / 나머지: -1점
+	                if (winners.contains(player)) {
+	                    scoreChange = 5;
+	                } else {
+	                    scoreChange = -1;
+	                }
+	            }
+
+	            // 점수 업데이트
+	            try (PreparedStatement pstmt = conn.prepareStatement(
+	                    "UPDATE member SET score = score + ? WHERE member_id = ?")) {
+	                pstmt.setInt(1, scoreChange);
+	                pstmt.setString(2, player);
+	                pstmt.executeUpdate();
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 	}
+
+
 
 	// 로그아웃 처리
 	public static void logoutUser(String username) {

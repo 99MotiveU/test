@@ -1,5 +1,6 @@
 package MafiaG;
 
+import MafiaG.ConGemini;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -30,7 +31,7 @@ public class Server {
     static String currentQuestion = "";
 
     static boolean resultRevealed = false;
-    static boolean gameStarted = false; // ✅ 게임 시작 플래그 추가
+    static boolean gameStarted = false;
 
     static ClientHandler geminiBot = null;
 
@@ -83,15 +84,29 @@ public class Server {
         sb.append("]}");
         broadcast(sb.toString());
     }
-
+    
+    static Set<String> usedColors = new HashSet<>();
     static String getRandomColor() {
-        String[] colors = {"#FF6B6B", "#6BCB77", "#4D96FF", "#FFC75F", "#A66DD4", "#FF9671", "#00C9A7"};
-        return colors[random.nextInt(colors.length)];
+        List<String> colors = new ArrayList<>(Arrays.asList(
+            "#FF6B6B", "#6BCB77", "#4D96FF", "#FFC75F", "#A66DD4", "#FF9671", "#00C9A7"
+        ));
+
+        // 사용된 색상 제거
+        colors.removeAll(usedColors);
+
+        if (colors.isEmpty()) {
+            // 색상 부족할 경우 예외 처리 또는 기본 색상 사용
+            return "#000000";
+        }
+
+        String color = colors.get(random.nextInt(colors.size()));
+        usedColors.add(color);
+        return color;
     }
 
     static void startNextQuestion() {
         if (questionCount >= MAX_QUESTIONS) {
-            broadcast("{\"type\":\"GAME_OVER\",\"message\":\"질문이 모두 완료되었습니다.\"}");
+            broadcastFinalVoteResult();
             return;
         }
 
@@ -130,14 +145,20 @@ public class Server {
         sb.append("{\"type\":\"REVEAL_RESULT\",\"question\":\"")
           .append(currentQuestion).append("\",\"answers\":[");
 
+        List<ClientHandler> shuffledClients = new ArrayList<>(clients);
+        Collections.shuffle(shuffledClients);
+
         int i = 0;
-        for (ClientHandler client : clients) {
+        for (ClientHandler client : shuffledClients) {
             String answer = answers.get(client.nickname);
             if (answer == null) answer = "응답 없음";
+
             sb.append("{\"color\":\"").append(client.colorCode)
               .append("\",\"message\":\"").append(answer).append("\"}");
-            if (++i < clients.size()) sb.append(",");
+
+            if (++i < shuffledClients.size()) sb.append(",");
         }
+
         sb.append("]}");
         broadcast(sb.toString());
 
@@ -174,9 +195,59 @@ public class Server {
         }, 3000);
     }
 
+ // 최종 투표 결과 발표 메서드 수정 (동점자 전원 승리 처리)
+    static void broadcastFinalVoteResult() {
+        int maxVotes = 0;
+        List<String> topNicknames = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> entry : voteMap.entrySet()) {
+            int votes = entry.getValue();
+            if (votes > maxVotes) {
+                maxVotes = votes;
+                topNicknames.clear();
+                topNicknames.add(entry.getKey());
+            } else if (votes == maxVotes) {
+                topNicknames.add(entry.getKey());
+            }
+        }
+
+        StringBuilder message = new StringBuilder("🏁 최종 투표 결과: ");
+        for (String name : topNicknames) {
+            message.append(name).append(" ");
+        }
+        message.append("유저가 ").append(maxVotes).append("표를 받아 승리했습니다.");
+
+        broadcast("{\"type\":\"FINAL_RESULT\",\"message\":\"" + message + "\"}");
+
+        updateScores(topNicknames);  // 동점자 모두 전달
+    }
+
+    // 점수 반영 메서드 수정: 다수 승자 처리
+    static void updateScores(List<String> winners) {
+        List<String> participants = new ArrayList<>();
+
+        for (ClientHandler client : clients) {
+            if (client.nickname != null && !client.nickname.equals("Gemini")) {
+                participants.add(client.nickname);
+            }
+        }
+
+        try {
+            DB.DatabaseManager.updateScoresAfterGame(winners, participants);
+            System.out.println("[서버] 게임 점수 반영 완료!");
+        } catch (Exception e) {
+            System.out.println("[서버] 점수 반영 중 오류 발생: " + e.getMessage());
+        }
+    }
+
+
     static String generateGeminiAnswer(String question) {
-        String[] sample = {"비빔밥이요!", "고양이요!", "넷플릭스요!", "스페인이요!", "잔잔한 재즈요!"};
-        return sample[random.nextInt(sample.length)];
+        try {
+            return ConGemini.getResponse(question);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Gemini 응답 실패: " + e.getMessage();
+        }
     }
 
     static class ClientHandler extends Thread {
@@ -209,10 +280,22 @@ public class Server {
                         isReady = true;
                         readyCount++;
                         int realPlayers = clients.size() - 1;
-                        if (readyCount == realPlayers && realPlayers >= 1 && !gameStarted) {
-                            gameStarted = true;
-                            broadcast("{\"type\":\"GAME_START\"}");
-                            startNextQuestion();
+                        if (readyCount == realPlayers && !gameStarted) {
+                            if (realPlayers >= 3) {
+                                gameStarted = true;
+                                broadcast("{\"type\":\"GAME_START\"}");
+                                startNextQuestion();
+                            } else {
+                                for (ClientHandler client : clients) {
+                                    try {
+                                        if (!(client instanceof GeminiBot)) {
+                                            client.send("{\"type\":\"chat\",\"color\":\"#FF0000\",\"message\":\"⚠️ 최소 3명 이상이 준비해야 게임을 시작할 수 있습니다.\"}");
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
                         }
                     } else if (msg.contains("\"type\":\"ANSWER_SUBMIT\"")) {
                         String answer = extractValue(msg, "message");
@@ -221,8 +304,10 @@ public class Server {
                         checkAndRevealIfReady();
                     } else if (msg.contains("\"type\":\"vote\"")) {
                         String target = extractValue(msg, "target");
-                        voteMap.put(target, voteMap.getOrDefault(target, 0) + 1);
-                        votedUsers.add(nickname);
+                        if (!target.equals(nickname)) {
+                            voteMap.put(target, voteMap.getOrDefault(target, 0) + 1);
+                            votedUsers.add(nickname);
+                        }
                         if (votedUsers.size() == clients.size() - 1) {
                             broadcastVoteResult();
                         }
@@ -240,6 +325,7 @@ public class Server {
                     if (br != null) br.close();
                     if (bw != null) bw.close();
                     if (socket != null) socket.close();
+                    usedColors.remove(colorCode);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

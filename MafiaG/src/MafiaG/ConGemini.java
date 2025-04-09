@@ -36,7 +36,7 @@ public class ConGemini {
         Request request = new Request.Builder()
                 .url(GEMINI_URL + GEMINI_API_KEY)
                 .post(RequestBody.create(mediaType, requestBody))
-                .addHeader("Content-jType", "application/json")
+                .addHeader("Content-Type", "application/json")
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
