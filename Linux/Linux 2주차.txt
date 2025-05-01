@@ -1,0 +1,104 @@
+# 유동기 - Linux 3단원 문제
+
+- 1.  파일을 저장하지 않고 강제로 vi 편집기를 종료하는 명령어는 무엇인가?
+    
+     :q!
+    
+- 2. 현재 줄을 복사한 뒤, 바로 아래 줄에 붙여넣기 위해 순서대로 입력해야하는 명령어는 무엇인가?
+    
+      yy(줄 복사), p(아래에 붙여넣기)
+    
+- 3. vi 편집기에서 파일 전체에서 linux라는 단어를 LINUX로 모두 변경하는 명령어는 무엇인가?
+    
+    :%s/linux/LINUX/g
+
+
+# 실습문제
+
+## 문제 1. 블로그 초안 정리하기
+
+1. 홈 디렉터리에 `blog.txt`라는 파일을 새로 만든다.
+2. 아래 내용을 입력한다.
+    
+    (오타와 비어 있는 곳 그대로 입력해야 한다.)
+    
+    ```
+    arduino
+    복사편집
+    my summer vacation
+    
+    I visited jeju island and it was beautful.
+    The beaches were clean and the food was amazing
+    Many activites like hiking and surfing were available.
+    
+    ```
+    
+3. 입력이 끝난 후 다음을 수행한다:
+    - 제목을 **맨 위 줄**에 올바르게 수정하고, **대문자** 규칙에 맞게 고친다.
+    - "beautful"과 "activites"의 **오타를 수정**한다.
+    - 문단을 보기 좋게 **빈 줄**을 적절히 추가한다.
+    - "The beaches were clean and the food was amazing" 문장의 마지막에 **마침표**를 추가한다.
+    - 실수로 삭제한 줄이 있다면 **복구**한다.
+    - 문서 맨 아래에 다음 한 줄을 추가한다:
+        
+        ```
+        perl
+        복사편집
+        Hope you enjoyed my story!
+        
+        ```
+        
+4. 파일을 저장하고 종료한다.
+
+---
+
+## 문제 2. 외부 파일 추가하고 문서 완성하기
+
+1. 홈 디렉터리에 `extra.txt`라는 파일을 미리 만들어둔다. 내용은 다음과 같다:
+    
+    ```
+    pgsql
+    복사편집
+    Jeju is famous for Hallasan mountain.
+    The local markets offer great street food.
+    
+    ```
+    
+2. `blog.txt` 파일을 다시 열고 다음을 진행한다:
+    - 커서를 "Many activities like hiking and surfing were available." 줄의 바로 아래로 이동한다.
+    - 거기에 `extra.txt` 파일 내용을 삽입한다.
+    - 삽입한 문장에서, "Hallasan mountain"을 "Hallasan Mountain"으로 수정한다.
+    - 문서 전체에서 "Jeju"라는 단어가 나오면 모두 "Jeju Island"로 수정한다.
+    - 제목 바로 아래에 "Date: 2025-04-27"을 추가한다.
+3. 수정한 내용을 다른 파일명으로 저장한다. (예: `blog_final.txt`)
+
+---
+
+## 문제 3. 환경설정 적용 + 편집 중 셸 명령 실행
+
+1. `blog_final.txt` 파일을 연다.
+2. 편집 중에 다음 작업을 수행한다:
+    - 줄 번호가 보이게 설정한다.
+    - 자동 들여쓰기가 적용되도록 한다.
+    - 탭 키를 누르면 스페이스 4칸이 입력되도록 설정한다.
+3. 문서 마지막에 새 줄을 추가하고, 다음 문장을 적는다:
+    
+    ```
+    bash
+    복사편집
+    # Document complete
+    
+    ```
+    
+4. 편집 도중, vi를 잠깐 빠져나와 현재 디렉터리에 있는 파일 목록을 확인한다.
+5. 확인 후 vi로 복귀하여, 수정 중인 내용을 저장하고 vi를 종료한다.
+
+---
+
+# 📋 이 문제 세트에서 스스로 선택해야 하는 것들
+
+- 줄 삭제, 복구 방법
+- 검색과 치환 방법
+- 외부 파일 삽입 방법
+- 셸 명령어 실행 및 복귀 방법
+- 설정 적용 명령어 (`set` 관련)
