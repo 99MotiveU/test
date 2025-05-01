@@ -1,0 +1,45 @@
+1. 리눅스의 구조를 구성하는 주요 계층 4가지를 나열하고 각 역할을 간단히 설명하세요.
+
+커널(Kernel): 하드웨어와 직접 통신하는 핵심 부분. 프로세스, 메모리, 파일시스템, 입출력 관리.
+쉘(Shell): 사용자와 커널 사이를 중재하는 인터페이스. 명령어를 해석하고 실행.
+파일 시스템(File System): 데이터를 저장하고 조직화하는 구조.
+응용 프로그램(Application): 사용자가 실행하는 프로그램 (예: 텍스트 편집기, 웹 서버 등)
+
+2. 다음 4가지의 리눅스 명령어의 기능을 서술하세요.
+ls : 현재 디렉터리의 파일 목록을 출력
+whoami : 현재 로그인한 사용자 이름 출력
+date : 현재 날짜와 시간 출력
+shutdown -h now 즉시 시스템 종료
+
+3. 다음 조건을 만족하는 리눅스 명령어들을 순서대로 작성하세요.
+
+1)  홈 디렉터리에 Linux_Study라는 디렉토리 생성
+mkdir ~/Linux_Study
+2) Linux_Study 디렉토리 안에 test라는 하위 디렉토리를 생성하고 test 디렉터리로 이동하세요.
+mkdir ~/Linux_Study/test, cd ~/Linux_Study/test
+3) test 디렉토리에서 hello.txt 파일을 생성하고, 내용으로 Hello Ubuntu를 입력하세요.
+echo "Hello Ubuntu > hello.txt
+4) hello.txt 파일의 내용을 출력하세요.
+cat hello.txt
+
+4. 다음 조건을 만족하는 리눅스 명령어들을 순서대로 작성하세요.(3번 이어서)
+
+1) hello.txt파일을 hellocopy.txt라는 이름으로 복사
+cp hello,txt hellocopy.txt
+2) Linux_Study 디렉토리 안에 test2 디렉토리를 만들고 hellocopy.txt를 이동
+mkdir ../test2, mv hellocopy.txt ../test2/
+3) hellocopy.txt 파일 이름을 hellomove.txt로 변경
+ mv ../test2/hellocopy.txt ../test2/hellomove.txt
+4) test2 디렉토리 삭제
+rm -r ../test2
+
+5. 다음 조건을 만족하는 리눅스 명령어들을 순서대로 작성하세요. (4번 이어서)
+
+1) 홈 디렉토리로 이동 후 test.txt 파일을 심볼릭 링크 test.link 생성
+cd~, ln -s ~/Linux_Study/test/test.txt test.link
+2) 파일이 정상적으로 심볼릭 링크로 생성되었는지 확인
+ls -l test.link
+3) test디렉토리 내에서 .txt 확장자를 가진 파일 찾기
+find ~/Linux_Study/test - name "*.txt"
+4)  grep 명령어의 위치와, file명령어의 경로 확인
+whereis grep, which file
