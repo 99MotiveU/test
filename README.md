@@ -1,2 +1,2 @@
 # testgit
-This repo is for all kinds of test or backup
+This repo is for all kind of test or backup
