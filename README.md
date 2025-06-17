@@ -1,16 +1,37 @@
-# 🧪 Playground & Backup
+# [SandBox]
 
-> 코드 조각, 설정 파일, 임시 아이디어 등을 자유롭게 시험하고 보관하는 저장소입니다.
+이 레포지토리는 다양한 파일, 코드 조각, 그리고 실험적인 프로젝트를 위한 개인적인 **임시 공간**, **테스트 영역**, 그리고 **저장소** 역할을 합니다.
 
 ---
 
-<p align="left">
-  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/99MotiveU/test?style=flat-square&color=blue">
-  <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/99MotiveU/test?style=flat-square&color=green">
-</p>
+## 목적
 
-### 📊 My GitHub Stats
+* **실험:** 새로운 라이브러리, 프레임워크 또는 코드 개념을 시도해 보는 공간입니다.
+* **임시 저장:** 특정 프로젝트 레포지토리에 넣기에는 아직 완성되지 않은 작업 중인 파일들을 보관합니다.
+* **학습:** 새로운 프로그래밍 기술을 연습하거나 코딩 챌린지를 해결하는 데 사용됩니다.
+* **백업:** 작은 파일들의 빠른 백업 용도로도 사용될 수 있습니다.
+* **일회성 코드:** 잠시 사용하고 버릴 스크립트나 테스트 코드를 보관합니다.
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=99MotiveU&show_icons=true&theme=transparent&hide_border=true" alt="99MotiveU's GitHub Stats" />
-</p>
+---
+
+## 내용물
+
+이 레포지토리의 내용은 유동적이며, 빈번한 변경, 추가, 삭제가 이루어질 수 있습니다. 다음을 포함할 수 있습니다:
+
+* 작은 코드 조각
+* 테스트 스크립트
+* 로컬 개발을 위한 설정 파일
+* 임시 메모
+* 개인 학습 자료
+
+---
+
+## 사용 방법
+
+필요에 따라 파일을 자유롭게 추가, 수정 또는 삭제하세요. 이 레포지토리는 장기적인 프로젝트 보관용이 아니라, 개발 반복을 위한 유연한 공간으로 사용됩니다.
+
+---
+
+## 참고
+
+이 레포지토리의 파일들은 완전히 문서화되거나 완벽하지 않을 수 있습니다. 주로 개인적인 사용과 빠른 개발을 위한 것입니다.
