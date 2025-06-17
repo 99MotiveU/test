@@ -13,7 +13,7 @@ public class LoginUI {
 
 	public void showLoginUI() {
 		JFrame frame = new JFrame("MafiaG");
-		ImageIcon icon = new ImageIcon("src/img/logo.png"); // 로고 경로
+		ImageIcon icon = new ImageIcon("src/img/logo.png"); 
 		frame.setIconImage(icon.getImage());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1200, 800);

@@ -26,6 +26,7 @@ public class Server {
         "어릴 때 꿈은 무엇이었나요?",
         "요즘 빠진 취미는?",
         "혼자 여행 간다면 어디로 가고 싶나요?"
+	"가장 기억에 남는 영화의 제목과 장면"
     );
     static List<String> usedQuestions = new ArrayList<>();
     static Random random = new Random();

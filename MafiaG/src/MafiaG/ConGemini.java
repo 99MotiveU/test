@@ -5,7 +5,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 public class ConGemini {
-    private static final String GEMINI_API_KEY = "AIzaSyBMbNZD6Q_zmzErjpfK_l9Ti7FMtzYAadA";
+    private static final String GEMINI_API_KEY = "";
     private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=";
 
     public static String getResponse(String userPrompt) throws IOException {
@@ -55,6 +55,6 @@ public class ConGemini {
         if (start != -1 && end != -1 && end > start) {
             return json.substring(start, end).replace("\\n", "\n");
         }
-        return "ÀÀ´ä ÆÄ½Ì ½ÇÆĞ: " + json;
+        return "      Ä½      : " + json;
     }
 }
