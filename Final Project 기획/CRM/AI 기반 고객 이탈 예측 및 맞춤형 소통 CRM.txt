@@ -1,0 +1,30 @@
+프로젝트 기획: AI 기반 고객 이탈 예측 및 맞춤형 소통 CRM (가칭: CustAI)
+프로젝트 개요:
+
+목표: 고객 데이터를 통합 관리하고, AI 기반으로 고객 이탈 가능성을 예측하며, 맞춤형 소통 채널(이메일, 메시지 등)을 통해 고객 만족도를 높이고 재구매율을 향상시키는 Java 기반 CRM 시스템을 개발합니다. 'Alditor'의 챗봇 및 개인화 기능을 고객 소통에 집중하여 발전시킵니다.
+핵심 가치: 고객 유지율 향상, 개인화된 고객 경험 제공.
+대상: 구독 서비스 기업, 온라인 쇼핑몰, 서비스업 등 고객 관계 관리가 중요한 모든 기업.
+1.5개월 목표 MVP 핵심 기능:
+
+고객 정보 통합 관리: 고객 기본 정보, 구매 이력, 문의 내역 등 통합 조회 및 관리.
+고객 세분화 (정적): 연령, 성별, 구매액 등 기본적인 기준에 따른 고객 그룹화.
+간단한 고객 이탈 예측 모델: 고객의 최근 활동 여부 (로그인, 구매 등) 및 과거 이탈 고객 데이터를 기반으로 한 간단한 이탈 가능성 점수 산정 (Python 연동).
+개별/그룹 이메일 발송: 고객 세분화 그룹 또는 개별 고객에게 맞춤형 이메일 발송 기능.
+문의 관리: 고객 문의 접수, 처리 현황 관리, 답변 등록.
+기술 스택 활용 방안:
+
+Backend: Java 17, Spring Boot, JPA.
+Database:
+MySQL/PostgreSQL/OracleDB: 고객 정보, 구매 이력, 문의 내역 등 관계형 데이터.
+MongoDB: 고객 행동 로그 (웹사이트 방문 기록, 클릭 스트림), 소셜 미디어 데이터 등 비정형 데이터.
+Caching: Redis: 자주 조회되는 고객 정보, 마케팅 캠페인 정보 등 캐싱.
+Frontend: React/Vue.js (고객 관리 대시보드, 이탈 예측 현황판, 캠페인 관리).
+AI 연동: Python (고객 이탈 예측 모델, 구매 패턴 분석) 및 Spring Boot와의 REST API 통신.
+Containerization: Docker/Podman (각 서비스 컨테이너화).
+Cloud: Azure (VMs, Azure SQL Database/PostgreSQL, Azure Cosmos DB for MongoDB, Azure Cache for Redis, Azure Functions for Serverless AI inference).
+향후 확장 고려 사항:
+
+고도화된 AI 기반 고객 세분화 및 타겟 마케팅 자동화.
+자연어 처리(NLP) 기반 고객 VOC (Voice of Customer) 분석 및 감성 분석.
+AI 챗봇을 통한 24/7 고객 응대 및 FAQ 자동화.
+캠페인 성과 분석 및 A/B 테스트 기능.
