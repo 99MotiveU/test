@@ -1,0 +1,18 @@
+ExitLog 리팩토링
+
+Bug 수정
+sql 쿼리 수정 / 로컬 mysql
+중복로그인 수정
+Redis 서버
+/write
+domain & package 정리
+
+readme.md 작성
+
+
+* Final project
+BackEnd Server (JDK17, Node.js )
+FrontEnd Server (React, )
+DB Server(RDBMS, NOSQL) mysql
+
+LMS / CRM / MES
