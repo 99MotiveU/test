@@ -1,0 +1,51 @@
+ 캐싱(Caching) 적용 예시
+
+프로젝트 B (전기요금 예측): 한국전력의 '전기요금 정책표'는 거의 바뀌지 않습니다. 이 데이터를 매번 DB에서 조회하는 대신, Redis에 캐싱해두면 요금 계산 API의 속도를 크게 향상시킬 수 있습니다.
+
+프로젝트 C (긱워커 플랫폼): 플랫폼별/지역별 '평균 소득 통계' 데이터는 10분~1시간 단위로 한 번씩만 계산해서 Redis에 캐싱해두면, 수많은 사용자가 대시보드를 조회할 때마다 DB에 부담을 주지 않을 수 있습니다.
+
+구현 방법: Spring Boot에서는 @EnableCaching과 @Cacheable 어노테이션 몇 줄만으로 매우 간단하게 캐싱을 적용할 수 있습니다.
+
+Java
+
+@Service
+public class StatsService {
+    @Cacheable(value = "hourlyStats", key = "#platformName") // 'hourlyStats' 캐시에 '플랫폼이름'을 키로 저장
+    public StatsDto getAverageIncome(String platformName) {
+        // 이 메소드는 1시간 동안 같은 platformName에 대해 최초 1번만 실행됨
+        // ... DB에서 통계를 계산하는 무거운 로직 ...
+        return statsDto;
+    }
+}
+B. 실시간 랭킹(Ranking) 적용 예시
+
+프로젝트 B (전기요금 예측): '우리 아파트 절약왕 랭킹 Top 10' 기능을 Redis의 Sorted Set 자료구조를 이용해 구현할 수 있습니다. 사용자가 요금을 절약할 때마다 Sorted Set에 (절약금액, 유저ID)를 저장하면, Redis가 자동으로 금액 순으로 정렬해줍니다.
+
+프로젝트 D (킥보드 신고): '이번 주 신고왕 랭킹 Top 10' 기능을 구현하여 사용자들의 참여를 유도할 수 있습니다.
+
+구현 방법: RedisTemplate을 사용하여 Sorted Set에 데이터를 추가(zSetOperations().add())하고, 상위 랭킹을 조회(zSetOperations().reverseRange())할 수 있습니다.
+
+다. 도입 난이도 및 결론
+난이도: 하~중. Spring Boot의 spring-boot-starter-data-redis 의존성을 추가하면 설정이 매우 간단하며, 기본적인 사용법은 1~2일 내에 충분히 학습 가능합니다. Docker를 이용해 로컬에 Redis 서버를 띄우는 것도 간편합니다.
+결론: 어떤 프로젝트를 선택하든 Redis 도입을 적극 추천합니다. 캐싱이나 랭킹 기능 중 하나만이라도 적용하면, 프로젝트의 기술적 깊이를 더하고 성능 개선 경험을 쌓는 좋은 기회가 될 것입니다.
+2. Kafka (도전 과제: MSA의 비동기 통신과 이벤트 기반 아키텍처)
+Kafka는 **'분산 이벤트 스트리밍 플랫폼'**으로, 대용량의 실시간 데이터를 안정적으로 처리하고 서비스 간의 결합도를 낮추는 데 사용됩니다. 강력한 만큼 Redis보다 훨씬 복잡하고 학습 곡선이 가파릅니다.
+
+가. 왜 Kafka를 사용해야 하는가?
+서비스 간 결합도 완화 (Decoupling): MSA 환경에서 서비스 A가 서비스 B를 직접 API로 호출하는 대신, Kafka에 '이벤트'를 던지기만 하면 됩니다. 그러면 서비스 B, C, D 등 해당 이벤트에 관심있는 모든 서비스들이 각자 이벤트를 가져가서 비동기적으로 처리합니다. 이로 인해 서비스 A는 B의 성공/실패 여부에 신경쓰지 않아도 되어, 시스템 전체의 안정성과 확장성이 높아집니다.
+나. 우리 프로젝트에 어떻게 적용할 수 있을까?
+A. 비동기(Asynchronous) MSA 통신 적용 예시
+
+프로젝트 A (정책코인 플랫폼): '결제'가 성공했을 때의 흐름을 생각해봅시다.
+
+(기존 방식) Payment-Service가 결제를 처리한 후, Wallet-Service의 '잔액 차감' API를 호출하고, Notification-Service(가상)의 '알림 발송' API를 호출합니다. 만약 '알림 발송'이 실패하면 전체 결제 트랜잭션을 롤백해야 할까요? 문제가 복잡해집니다.
+(Kafka 적용 방식)
+Payment-Service는 결제 처리 후, **'결제 성공 이벤트(PaymentCompletedEvent)'**를 Kafka의 payment-topic에 발행(publish)하고 즉시 사용자에게 "결제 완료" 응답을 보냅니다.
+Wallet-Service는 payment-topic을 구독(subscribe)하고 있다가, '결제 성공 이벤트'를 받아 자신의 DB에서 잔액을 차감합니다.
+Notification-Service도 payment-topic을 구독하고 있다가, 이벤트를 받아 사용자에게 푸시 알림을 보냅니다.
+다. 도입 난이도 및 결론
+난이도: 상. Kafka 자체의 아키텍처(Topic, Partition, Broker, Zookeeper 등)에 대한 이해가 필요합니다. Docker Compose로 로컬 환경을 구축하는 것부터 Producer/Consumer를 코드로 작성하고, 메시지 유실/중복 문제를 고민하는 것까지 1.5개월 내에 안정적으로 구현하기에는 매우 도전적인 과제입니다.
+결론: "핵심 기능 개발이 3~4주차에 순조롭게 완료되고, 팀원 전체가 새로운 기술 도전에 대한 강한 열의가 있을 때 '추가 목표(Stretch Goal)'로 설정" 하는 것을 추천합니다. Kafka 도입에 너무 많은 시간을 쏟다가 핵심 기능조차 완성하지 못하는 리스크를 피해야 합니다.
+최종 요약 및 제안
+Redis 도입은 기본적으로 고려합시다. 캐싱, 랭킹 등 간단하지만 효과적인 기능을 추가하여 프로젝트의 완성도를 높이는 것을 목표로 합니다.
+Kafka 도입은 신중하게 결정합시다. MSA의 꽃이라 불리는 이벤트 기반 아키텍처를 경험하는 것은 엄청난 자산이 되겠지만, 우리 팀의 현재 속도와 목표를 고려하여 '도전 과제'로 남겨두는 것이 현명한 전략일 수 있습니다. 만약 비동기 처리를 경험하고 싶다면, Kafka보다 간단한 Spring @Async나 Redis Pub/Sub을 먼저 적용해보는 것도 좋은 대안입니다.
