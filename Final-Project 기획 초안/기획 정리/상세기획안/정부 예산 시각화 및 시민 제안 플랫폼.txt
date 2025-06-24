@@ -1,0 +1,60 @@
+ '나라살림-워치' 정부 예산 시각화 및 시민 제안 플랫폼
+
+1. 프로젝트 개요
+1.1. 프로젝트명: 나라살림-워치 (Narasallim-Watch)
+1.2. 프로젝트 목표: 정부가 공개하는 복잡하고 방대한 예산 데이터를 일반 시민의 눈높이에 맞춰 시각화하고, 예산에 대한 시민들의 토론과 제안을 활성화하여 민주주의의 투명성과 시민 참여를 높이는 'Gov-Tech(정부 기술)' 플랫폼을 구축한다.
+1.3. 기획 배경: 9월 정기국회 예산 심의 기간, 대다수 국민은 수백조 원에 달하는 세금이 어떻게 쓰이는지 알기 어렵습니다. 정보의 비대칭은 정치적 무관심과 불신으로 이어지며, 이를 기술을 통해 해결하고 국민의 알 권리를 충족시키고자 합니다.
+1.4. 기대 효과:
+시민: 나의 세금이 어디에 쓰이는지 직관적으로 이해하고, 예산 감시 및 정책 제안에 직접 참여하는 경험.
+사회: 정책 결정 과정의 투명성 증대, 데이터 기반의 건전한 공론장 형성, 정치 효능감 증대.
+2. PoC 범위 및 핵심 기능
+2.1. 개발 목표: 6주 내 특정 연도(e.g., 2025년)의 정부 예산안 원본 데이터(Excel/CSV)를 파싱하여 DB에 구축하고, 이를 인터랙티브 차트로 시각화하며, 시민들이 의견을 남길 수 있는 MVP 웹 애플리케이션 개발.
+2.2. 사용자 역할 정의:
+일반 시민: 예산 시각화 데이터를 조회하고, '나의 세금 영수증'을 발급받으며, 토론에 참여하는 사용자.
+관리자: 원본 예산 데이터를 시스템에 업로드하고, 데이터 파싱(ETL) 작업을 실행하는 주체.
+2.3. 핵심 기능 명세:
+관리자:
+예산 원본 파일(Excel/CSV)을 업로드하는 관리자 페이지.
+업로드된 파일을 DB에 적재하는 Spring Batch 작업 실행 버튼.
+일반 시민:
+[핵심 UI] 전체 예산 구조를 한눈에 볼 수 있는 인터랙티브 트리맵(Treemap) 또는 선버스트(Sunburst) 차트 (React + D3.js 또는 ECharts 라이브러리 활용).
+차트의 특정 항목 클릭 시, 해당 분야의 세부 사업 내역으로 드릴다운(Drill-down) 되는 기능.
+연봉을 입력하면 소득세(모의 계산)가 각 분야에 어떻게 배분되는지 보여주는 '나의 세금 영수증' UI.
+각 세부 사업별로 의견을 남길 수 있는 댓글(토론) 기능.
+2.4. 제외 기능 (Out of Scope):
+여러 연도의 예산 비교 분석 기능.
+실시간 예산 집행 현황 추적.
+국회에 제안을 직접 전달하는 시스템 연동.
+3. 시스템 아키텍처
+3.1. 기술 스택
+Frontend: React, axios, React Router, D3.js 또는 ECharts
+Backend: Java 17+, Spring Boot 3.x, Spring Batch, Apache POI (Excel 파싱)
+Database: PostgreSQL
+3.2. 프론트엔드: React 기반의 SPA. 데이터 시각화 라이브러리를 통해 복잡한 계층형 예산 데이터를 사용자가 쉽게 탐색할 수 있는 UI/UX를 제공.
+3.3. 백엔드 아키텍처: API Gateway + 3 Microservices
+3.4. 백엔드 역할 분담 (4명):
+Service A: User-Service: 시민/관리자 회원가입, 로그인, 인증/인가, 댓글/제안 등 사용자 활동 관리.
+Service B: Budget-Data-Service: 가공된 예산 데이터를 저장하고, 프론트엔드의 시각화 요청에 맞게 계층형 JSON 형태로 데이터를 제공하는 API 서버.
+Service C: Batch-Service: ETL 전용 서비스. 관리자가 트리거하면 Spring Batch를 실행하여 원본 파일을 파싱하고, Budget-Data-Service의 DB에 데이터를 적재하는 장기 실행(Long-running) 작업 담당.
+4. 데이터베이스 모델링 (PostgreSQL)
+users (id, email, password, role)
+budget_items (id, year, name, amount, code, parent_id, depth) - parent_id를 이용한 자기참조(Self-referencing) 관계로 계층 구조 표현.
+comments (id, user_id, budget_item_id, content, created_at)
+5. 최종 산출물
+프론트엔드 소스코드 (GitHub Repository)
+백엔드 소스코드 (GitHub Repository)
+실행 가능한 데모 서버 URL (Azure 배포)
+Swagger UI로 생성된 API 명세서
+프로젝트 최종 발표 자료(PPT)
+6. 배포 아키텍처 (Deployment Architecture - Azure)
+6.1. 배포 목표: GitHub Actions를 통해 CI/CD를 구축하고, React Frontend와 Spring Boot MSA를 Azure의 관리형 서비스에 독립적으로 배포하여 안정적인 운영 환경을 마련한다.
+6.2. Azure 서비스 활용 계획:
+구분	컴포넌트	활용 Azure 서비스	선정 이유
+Frontend	React SPA	Azure Static Web Apps	SPA 호스팅 및 CI/CD 구축에 최적화.
+Backend	Spring Boot Microservices (User, Data, Batch)	Azure Container Apps	MSA 운영에 최적화된 서버리스 컨테이너 플랫폼. (특히, Batch-Service는 다른 서비스보다 높은 메모리/CPU, 긴 타임아웃을 설정하여 운영 가능)
+Database	PostgreSQL	Azure Database for PostgreSQL	완전 관리형 서비스로 DB 운영 부담 최소화.
+Container	Docker Images	Azure Container Registry (ACR)	프라이빗 Docker 이미지 저장 및 관리.
+CI/CD	자동화 파이프라인	GitHub Actions	Azure 서비스들과의 완벽한 연동.
+
+Sheets로 내보내기
+6.3. 배포 흐름 (CI/CD Pipeline): 개발자가 코드를 GitHub에 Push하면, GitHub Actions가 이를 감지하여 FE는 Static Web Apps로, BE는 Docker 이미지를 빌드해 ACR을 거쳐 Container Apps로 자동 배포.
