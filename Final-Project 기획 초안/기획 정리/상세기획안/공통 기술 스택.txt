@@ -1,6 +1,0 @@
-Frontend: React, axios (API 통신), React Router (라우팅), Zustand 또는 Recoil (상태 관리)
-Backend: Java 17+, Spring Boot 3.x, Spring Security + JWT
-Database: PostgreSQL
-Data Access: Spring Data JPA
-Version Control: Git, GitHub (FE/BE Repository 분리)
-Cloud(MSA): Azure
